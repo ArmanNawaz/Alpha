@@ -1,3 +1,5 @@
+import 'package:alpha/screens/sign_up.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -38,7 +40,7 @@ class _LoginState extends State<Login> {
             child: Container(
               // height: 400,
               padding: EdgeInsets.all(50),
-              width: 2 * size.width,
+              width: size.width,
               color: Colors.white,
               child: Image.asset(
                 'assets/united.jpeg',
@@ -67,13 +69,14 @@ class _LoginState extends State<Login> {
                   color: Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
-                style: TextStyle(fontSize: 24, color: Colors.white),
+                controller: username,
+                style: TextStyle(fontSize: 22, color: Colors.white),
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(borderSide: BorderSide.none),
                     hintText: 'Username',
                     hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.8), fontSize: 24)),
+                        color: Colors.white.withOpacity(0.8), fontSize: 22)),
               ),
             ),
           ),
@@ -85,14 +88,15 @@ class _LoginState extends State<Login> {
                   color: Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20)),
               child: TextField(
-                style: TextStyle(fontSize: 24, color: Colors.white),
+                controller: password,
+                style: TextStyle(fontSize: 22, color: Colors.white),
                 cursorColor: Colors.white,
                 obscureText: hidePassword,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(borderSide: BorderSide.none),
                   hintText: 'Password',
                   hintStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.8), fontSize: 24),
+                      color: Colors.white.withOpacity(0.8), fontSize: 22),
                   suffixIcon: InkWell(
                     onTap: () {
                       setState(() {
@@ -155,7 +159,10 @@ class _LoginState extends State<Login> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context, CupertinoPageRoute(builder: (_) => SignUp()));
+              },
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 20),
