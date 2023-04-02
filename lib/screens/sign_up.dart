@@ -1,5 +1,6 @@
 import 'package:alpha/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -120,7 +121,7 @@ class _SignUpState extends State<SignUp> {
                     : null,
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: EdgeInsets.symmetric(vertical: 15),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.greenAccent,
@@ -134,8 +135,8 @@ class _SignUpState extends State<SignUp> {
                           'Register',
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400),
                         ),
                 ),
               ),
@@ -162,22 +163,27 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 50.0, vertical: 10),
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 2),
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20)),
                       child: TextField(
                         controller: otp,
-                        style: TextStyle(fontSize: 24),
+                        style: TextStyle(fontSize: 18),
                         cursorColor: Colors.black,
                         textAlign: TextAlign.center,
+                        keyboardType: TextInputType.phone,
+                        maxLength: 4,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(4),
+                        ],
                         decoration: InputDecoration(
+                          counterText: '',
                           border:
                               OutlineInputBorder(borderSide: BorderSide.none),
                           hintText: 'OTP',
                           hintStyle: TextStyle(
                               color: Colors.black.withOpacity(0.5),
-                              fontSize: 24),
+                              fontSize: 18),
                         ),
                       ),
                     ),
@@ -191,7 +197,7 @@ class _SignUpState extends State<SignUp> {
                       onTap: () {},
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.symmetric(vertical: 15),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: Colors.greenAccent,
@@ -201,7 +207,7 @@ class _SignUpState extends State<SignUp> {
                           'Submit',
                           style: TextStyle(
                               color: Colors.white,
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.w600),
                         ),
                       ),

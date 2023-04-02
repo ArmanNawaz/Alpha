@@ -69,54 +69,105 @@ class _DashboardState extends State<Dashboard> {
                   ],
                 ),
               ),
-              ListTile(
-                onTap: () {},
-                title: Text(
-                  'Notification',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
+              SizedBox(
+                height: 10,
               ),
               ListTile(
-                onTap: () {},
-                title: Text(
-                  'Change Password',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Notification',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.notifications_none,
+                    color: Colors.black,
+                  )),
               ListTile(
-                onTap: () {},
-                title: Text(
-                  'Go to Website',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Change Password',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.change_circle_outlined,
+                    color: Colors.black,
+                  )),
               ListTile(
-                onTap: () {},
-                title: Text(
-                  'Review',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Go to Website',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.web,
+                    color: Colors.black,
+                  )),
               ListTile(
-                onTap: () {},
-                title: Text(
-                  'About Us',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Review',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.reviews_outlined,
+                    color: Colors.black,
+                  )),
               ListTile(
-                onTap: () {},
-                title: Text(
-                  'Logout',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20),
-                ),
-              )
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'About Us',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.summarize_outlined,
+                    color: Colors.black,
+                  )),
+              ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      'Logout',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.logout_outlined,
+                    color: Colors.black,
+                  ))
             ],
           ),
         ),

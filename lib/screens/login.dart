@@ -35,6 +35,7 @@ class _LoginState extends State<Login> {
     return SafeArea(
         child: Scaffold(
       body: Container(
+        alignment: Alignment.center,
         height: size.height,
         width: size.width,
         decoration: BoxDecoration(
@@ -43,121 +44,134 @@ class _LoginState extends State<Login> {
         ),
         child: ListView(
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 50, horizontal: 130),
-              child: Container(
-                height: 145,
-                width: 145,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                      image: AssetImage('assets/united.jpeg'),
-                      fit: BoxFit.fill),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(28.0),
-              child: Center(
-                child: Text(
-                  'Sign In',
-                  style: TextStyle(
-                      fontSize: 28,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-            c.createTextField(title: 'Username', controller: username),
-            c.createTextField(
-                title: 'Password', controller: password, isPassword: true),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 35.0),
-              child: InkWell(
-                onTap: () {},
-                child: Text(
-                  'Forgot Password',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
-              child: InkWell(
-                onTap: () {
-                  if (username.text.trim().isEmpty) {
-                    showInSnackBar(
-                        value: 'Please input username', context: context);
-                  } else if (password.text.trim().isEmpty) {
-                    showInSnackBar(
-                        value: 'PLease input password', context: context);
-                  } else {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    Future.delayed(Duration(seconds: 3)).then((value) {
-                      setState(() {
-                        isLoading = false;
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            CupertinoPageRoute(builder: (_) => Dashboard()),
-                            (route) => false);
-                      });
-                    });
-                  }
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.greenAccent,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: isLoading
-                      ? CircularProgressIndicator(
-                          color: Colors.white,
-                        )
-                      : Text(
-                          'Login',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        ),
-                ),
-              ),
-            ),
-            isLoading
-                ? SizedBox()
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(context,
-                            CupertinoPageRoute(builder: (_) => SignUp()));
-                      },
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 50, horizontal: 130),
+                  child: Container(
+                    height: 145,
+                    width: 145,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF174AFD),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'SignUp',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600),
-                        ),
+                      image: DecorationImage(
+                          image: AssetImage('assets/united.jpeg'),
+                          fit: BoxFit.fill),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(28.0),
+                  child: Center(
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                          fontSize: 26,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+                c.createTextField(title: 'Username', controller: username),
+                c.createTextField(
+                    title: 'Password', controller: password, isPassword: true),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 35.0),
+                  child: InkWell(
+                    onTap: () {},
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Forgot Password',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
-                  )
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 20),
+                  child: InkWell(
+                    onTap: () {
+                      if (username.text.trim().isEmpty) {
+                        showInSnackBar(
+                            value: 'Please input username', context: context);
+                      } else if (password.text.trim().isEmpty) {
+                        showInSnackBar(
+                            value: 'PLease input password', context: context);
+                      } else {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        Future.delayed(Duration(seconds: 3)).then((value) {
+                          setState(() {
+                            isLoading = false;
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                CupertinoPageRoute(builder: (_) => Dashboard()),
+                                (route) => false);
+                          });
+                        });
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.greenAccent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            )
+                          : Text(
+                              'Login',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                    ),
+                  ),
+                ),
+                isLoading
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(context,
+                                CupertinoPageRoute(builder: (_) => SignUp()));
+                          },
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF174AFD),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'SignUp',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ),
+                      )
+              ],
+            ),
           ],
         ),
       ),

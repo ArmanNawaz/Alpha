@@ -10,7 +10,7 @@ class Constants {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.5),
             borderRadius: BorderRadius.circular(20)),
@@ -19,13 +19,13 @@ class Constants {
             controller: controller,
             obscureText: isPassword ? hide : false,
             enabled: enabled,
-            style: TextStyle(fontSize: 22, color: Colors.white),
+            style: TextStyle(fontSize: 18, color: Colors.white),
             cursorColor: Colors.white,
             decoration: InputDecoration(
               border: OutlineInputBorder(borderSide: BorderSide.none),
               suffixIcon: isPassword
                   ? IconButton(
-                      iconSize: 28,
+                      iconSize: 22,
                       color: Colors.white,
                       onPressed: () {
                         setState(() {
@@ -38,7 +38,7 @@ class Constants {
                   : null,
               hintText: title,
               hintStyle:
-                  TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 22),
+                  TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 18),
             ),
           );
         }),
