@@ -1,5 +1,4 @@
-import 'package:alpha/screens/verify_otp.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:alpha/constants.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
@@ -13,6 +12,10 @@ class _SignUpState extends State<SignUp> {
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+  TextEditingController otp = TextEditingController();
+  Constants c = Constants();
+  bool enabled = true;
+  bool isLoading = false;
 
   void showInSnackBar({required String value, required BuildContext context}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -28,27 +31,33 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xFF4A249E),
-        appBar: AppBar(
-          backgroundColor: Color(0xFF4A249E),
-          elevation: 0,
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Container(
+        height: size.height,
+        // width: size.width,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/bg_alpha.jpeg'), fit: BoxFit.cover),
         ),
-        body: ListView(
+        child: ListView(
           children: [
-            SizedBox(
-              height: 50,
-            ),
-            Container(
-              padding: EdgeInsets.all(50),
-              width: size.width,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Color(0xFF4A249E),
-                image: DecorationImage(
-                  image: AssetImage('assets/united-bg.png'),
-                  fit: BoxFit.contain,
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 40, horizontal: 130),
+              child: Container(
+                height: 145,
+                width: 145,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                      image: AssetImage('assets/united.jpeg'),
+                      fit: BoxFit.fill),
                 ),
               ),
             ),
@@ -64,92 +73,51 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20)),
-                child: TextField(
-                  controller: username,
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(borderSide: BorderSide.none),
-                      hintText: 'Username',
-                      hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.8), fontSize: 24)),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20)),
-                child: TextField(
-                  controller: password,
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: 'Password',
-                    hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.8), fontSize: 24),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20)),
-                child: TextField(
-                  controller: confirmPassword,
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: 'Confirm Password',
-                    hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.8), fontSize: 24),
-                  ),
-                ),
-              ),
-            ),
+            c.createTextField(
+                title: 'Username', controller: username, enabled: enabled),
+            c.createTextField(
+                title: 'Password',
+                controller: password,
+                isPassword: true,
+                enabled: enabled),
+            c.createTextField(
+                title: 'Confirm Password',
+                controller: confirmPassword,
+                isPassword: true,
+                enabled: enabled),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
               child: InkWell(
-                onTap: () {
-                  if (username.text.trim().isEmpty) {
-                    showInSnackBar(
-                        value: 'Please input username', context: context);
-                  } else if (password.text.trim().isEmpty) {
-                    showInSnackBar(
-                        value: 'Please input password', context: context);
-                  } else if (confirmPassword.text.trim().isEmpty) {
-                    showInSnackBar(
-                        value: 'Please confirm your password',
-                        context: context);
-                  } else if (password.text.trim() !=
-                      confirmPassword.text.trim()) {
-                    showInSnackBar(
-                        value: 'Password mismatched', context: context);
-                  } else {
-                    Navigator.push(context,
-                        CupertinoPageRoute(builder: (_) => VerifyOTP()));
-                  }
-                },
+                onTap: enabled
+                    ? () {
+                        if (username.text.trim().isEmpty) {
+                          showInSnackBar(
+                              value: 'Please input username', context: context);
+                        } else if (password.text.trim().isEmpty) {
+                          showInSnackBar(
+                              value: 'Please input password', context: context);
+                        } else if (confirmPassword.text.trim().isEmpty) {
+                          showInSnackBar(
+                              value: 'Please confirm your password',
+                              context: context);
+                        } else if (password.text.trim() !=
+                            confirmPassword.text.trim()) {
+                          showInSnackBar(
+                              value: 'Password mismatched', context: context);
+                        } else {
+                          setState(() {
+                            enabled = false;
+                            isLoading = true;
+                            Future.delayed(Duration(seconds: 3)).then((value) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+                          });
+                        }
+                      }
+                    : null,
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 20),
@@ -158,16 +126,88 @@ class _SignUpState extends State<SignUp> {
                     color: Colors.greenAccent,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600),
-                  ),
+                  child: isLoading
+                      ? CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : Text(
+                          'Register',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
-            )
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            !enabled
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                            horizontal: 55.0, vertical: 10)
+                        .copyWith(bottom: 0),
+                    child: Text(
+                      'Enter the OTP: ',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  )
+                : SizedBox(),
+            !enabled
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50.0, vertical: 10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 2),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: TextField(
+                        controller: otp,
+                        style: TextStyle(fontSize: 24),
+                        cursorColor: Colors.black,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          border:
+                              OutlineInputBorder(borderSide: BorderSide.none),
+                          hintText: 'OTP',
+                          hintStyle: TextStyle(
+                              color: Colors.black.withOpacity(0.5),
+                              fontSize: 24),
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
+            !enabled
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100.0, vertical: 20),
+                    child: InkWell(
+                      onTap: () {},
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.greenAccent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
           ],
         ),
       ),

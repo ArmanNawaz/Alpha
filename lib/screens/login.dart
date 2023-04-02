@@ -1,3 +1,5 @@
+import 'package:alpha/constants.dart';
+import 'package:alpha/screens/dashboard.dart';
 import 'package:alpha/screens/sign_up.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,8 @@ class _LoginState extends State<Login> {
   bool hidePassword = true;
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  Constants c = Constants();
+  bool isLoading = false;
 
   void showInSnackBar({required String value, required BuildContext context}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -30,158 +34,132 @@ class _LoginState extends State<Login> {
     Size size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Color(0xFF0095FF),
-      body: ListView(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50)),
-            child: Container(
-              // height: 400,
-              padding: EdgeInsets.all(50),
-              width: size.width,
-              color: Colors.white,
-              child: Image.asset(
-                'assets/united.jpeg',
-                height: 100,
-                width: 100,
+      body: Container(
+        height: size.height,
+        width: size.width,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/bg_alpha.jpeg'), fit: BoxFit.cover),
+        ),
+        child: ListView(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 50, horizontal: 130),
+              child: Container(
+                height: 145,
+                width: 145,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                      image: AssetImage('assets/united.jpeg'),
+                      fit: BoxFit.fill),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Center(
-              child: Text(
-                'Sign In',
-                style: TextStyle(
-                    fontSize: 28,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600),
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Center(
+                child: Text(
+                  'Sign In',
+                  style: TextStyle(
+                      fontSize: 28,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20)),
-              child: TextField(
-                controller: username,
-                style: TextStyle(fontSize: 22, color: Colors.white),
-                cursorColor: Colors.white,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide.none),
-                    hintText: 'Username',
-                    hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.8), fontSize: 22)),
+            c.createTextField(title: 'Username', controller: username),
+            c.createTextField(
+                title: 'Password', controller: password, isPassword: true),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 35.0),
+              child: InkWell(
+                onTap: () {},
+                child: Text(
+                  'Forgot Password',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20)),
-              child: TextField(
-                controller: password,
-                style: TextStyle(fontSize: 22, color: Colors.white),
-                cursorColor: Colors.white,
-                obscureText: hidePassword,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderSide: BorderSide.none),
-                  hintText: 'Password',
-                  hintStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.8), fontSize: 22),
-                  suffixIcon: InkWell(
-                    onTap: () {
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
+              child: InkWell(
+                onTap: () {
+                  if (username.text.trim().isEmpty) {
+                    showInSnackBar(
+                        value: 'Please input username', context: context);
+                  } else if (password.text.trim().isEmpty) {
+                    showInSnackBar(
+                        value: 'PLease input password', context: context);
+                  } else {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    Future.delayed(Duration(seconds: 3)).then((value) {
                       setState(() {
-                        hidePassword = !hidePassword;
+                        isLoading = false;
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            CupertinoPageRoute(builder: (_) => Dashboard()),
+                            (route) => false);
                       });
-                    },
-                    child: Icon(
-                      hidePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                      color: Colors.white,
-                      size: 28,
-                    ),
+                    });
+                  }
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.greenAccent,
+                    borderRadius: BorderRadius.circular(20),
                   ),
+                  child: isLoading
+                      ? CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : Text(
+                          'Login',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 35.0),
-            child: InkWell(
-              onTap: () {},
-              child: Text(
-                'Forgot Password',
-                textAlign: TextAlign.right,
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
-            child: InkWell(
-              onTap: () {
-                if (username.text.trim().isEmpty) {
-                  showInSnackBar(
-                      value: 'Please input username', context: context);
-                } else if (password.text.trim().isEmpty) {
-                  showInSnackBar(
-                      value: 'PLease input password', context: context);
-                } else {}
-              },
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.greenAccent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context, CupertinoPageRoute(builder: (_) => SignUp()));
-              },
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Color(0xFF174AFD),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'SignUp',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-          )
-        ],
+            isLoading
+                ? SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(context,
+                            CupertinoPageRoute(builder: (_) => SignUp()));
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF174AFD),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'SignUp',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  )
+          ],
+        ),
       ),
     ));
   }
