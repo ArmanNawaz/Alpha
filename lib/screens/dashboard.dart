@@ -1,3 +1,5 @@
+import 'package:alpha/screens/profile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -196,23 +198,29 @@ class _DashboardState extends State<Dashboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(10),
-                  height: 150,
-                  width: 150,
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/profile.png',
-                        height: 100,
-                        width: 100,
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Text('PROFILE')
-                    ],
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context, CupertinoPageRoute(builder: (_) => Profile()));
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.all(10),
+                    height: 150,
+                    width: 150,
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/profile.png',
+                          height: 100,
+                          width: 100,
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text('PROFILE')
+                      ],
+                    ),
                   ),
                 ),
                 Container(
