@@ -1,3 +1,8 @@
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
@@ -8,6 +13,96 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  String studentId = '';
+  String name = '';
+  String rollNo = '';
+  String email = '';
+  String contact = '';
+  String branch = '';
+  String course = '';
+  String year = '';
+  String dob = '';
+  String gender = '';
+  List<String> details = [];
+
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+  var loggedInUser;
+
+  final _storage = FirebaseStorage.instance;
+  late String fileName;
+  late String filePath;
+  String imageUrl = '';
+  var uploadPath;
+
+  Future<void> uploadImage() async {
+    File file = File(filePath);
+    try {
+      Reference reference = _storage.ref().child('Profile').child(studentId);
+      UploadTask uploadTask = reference.putFile(file);
+
+      await uploadTask.whenComplete(() async {
+        uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
+      });
+
+      if (uploadPath.isNotEmpty) {
+        _firestore.collection('user').doc(studentId).update({
+          "ImageUrl": uploadPath,
+        }).then((value) => null);
+      }
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUserDetail();
+  }
+
+  void getCurrentUserDetail() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+      }
+    } catch (e) {}
+
+    await _firestore
+        .collection('user')
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              var s = element.data();
+              if (loggedInUser.email == s['Email']) {
+                setState(() {
+                  studentId = element.id;
+                  name = s['Name'];
+                  email = s['Email'];
+                  rollNo = s['University Roll No'];
+                  contact = s['Contact'];
+                  course = s['Course'];
+                  branch = s['Branch'];
+                  year = s['Year'];
+                  gender = s['Gender'];
+                  dob = s['DOB'];
+                  // imageUrl = s['ImageUrl'];
+
+                  details = [
+                    'Student Id:  $studentId',
+                    'Name:  $name',
+                    'Email:  $email',
+                    'University RollNo:  $rollNo',
+                    'Contact:  $contact',
+                    'Course:  $course',
+                    'Branch:  $branch',
+                    'Year:  $year',
+                    'DOB:  $dob',
+                    'Gender:  $gender'
+                  ];
+                });
+              }
+            }));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -22,7 +117,7 @@ class _ProfileState extends State<Profile> {
               child: Container(
                 height: 260,
                 width: size.width,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(30),
                       bottomRight: Radius.circular(30)),
@@ -32,20 +127,27 @@ class _ProfileState extends State<Profile> {
                 ),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 40,
+                    const SizedBox(
+                      height: 65,
                     ),
-                    Image.asset(
-                      'assets/profile.png',
-                      height: 120,
-                      width: 120,
+                    CircleAvatar(
+                      radius: 50,
+                      // child: imageUrl.isNotEmpty
+                      //     ? Image.network(
+                      //         imageUrl,
+                      //         fit: BoxFit.cover,
+                      //       ):
+                      child: Image.asset(
+                        "assets/profile.png",
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    SizedBox(
-                      height: 20,
+                    const SizedBox(
+                      height: 17,
                     ),
                     Text(
-                      'JUGAL SINGH',
-                      style: TextStyle(
+                      name.toUpperCase(),
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w600),
@@ -57,47 +159,73 @@ class _ProfileState extends State<Profile> {
             Positioned(
               top: 230,
               child: Material(
-                elevation: 50,
-                shadowColor: Colors.blue,
+                elevation: 30,
+                shadowColor: Colors.blueAccent,
                 // borderRadius: BorderRadius.circular(20),
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0xFFB176CC)),
-                    borderRadius: BorderRadius.circular(20)),
+                    side: const BorderSide(color: Color(0xFFB176CC)),
+                    borderRadius: BorderRadius.circular(25)),
                 child: Container(
-                    height: size.height * 0.6,
-                    width: size.width * 0.8,
+                    height: size.height * 0.63,
+                    width: size.width * 0.9,
                     child: ListView.builder(
-                        itemCount: 10,
+                        itemCount: details.length,
                         itemBuilder: (ctx, i) {
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 10.0, horizontal: 20),
                             child: Container(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              alignment: AlignmentDirectional.centerStart,
                               height: 50,
                               width: size.width * 0.7,
                               decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Colors.black.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(15)),
+                              child: Text(
+                                details[i],
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w500),
+                              ),
                             ),
                           );
                         })),
               ),
             ),
             Positioned(
-              bottom: 20,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 7, horizontal: 20),
-                alignment: Alignment.center,
-                height: 50,
-                decoration: BoxDecoration(
-                    color: Color(0xFF0D5DD7),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Text(
-                  'Change Profile Pic',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500),
+              bottom: 8,
+              child: InkWell(
+                onTap: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    allowMultiple: false,
+                    type: FileType.any,
+                  );
+                  if (result != null) {
+                    filePath = result.files.single.path!;
+                    fileName = result.files.single.name;
+                    uploadImage();
+                  } else {
+                    print('file not selected');
+                  }
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 7, horizontal: 20),
+                  alignment: Alignment.center,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0D5DD7),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Change Profile Pic',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500),
+                  ),
                 ),
               ),
             )

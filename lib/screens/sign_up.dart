@@ -1,19 +1,36 @@
 import 'package:alpha/constants.dart';
+import 'package:alpha/screens/dashboard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
+  const SignUp({Key? key, this.id}) : super(key: key);
+
+  final String? id;
 
   @override
   State<SignUp> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    studentId = widget.id!;
+  }
+
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+
+  late String studentId;
+
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
-  TextEditingController otp = TextEditingController();
+
   Constants c = Constants();
   bool enabled = true;
   bool isLoading = false;
@@ -22,8 +39,8 @@ class _SignUpState extends State<SignUp> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(value,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20, color: Colors.white)),
-      duration: Duration(seconds: 2),
+          style: const TextStyle(fontSize: 20, color: Colors.white)),
+      duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.fixed,
       elevation: 5.0,
     ));
@@ -42,7 +59,7 @@ class _SignUpState extends State<SignUp> {
       body: Container(
         height: size.height,
         // width: size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/bg_alpha.jpeg'), fit: BoxFit.cover),
         ),
@@ -56,14 +73,14 @@ class _SignUpState extends State<SignUp> {
                 width: 145,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                       image: AssetImage('assets/united.jpeg'),
                       fit: BoxFit.fill),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(28.0),
+            const Padding(
+              padding: EdgeInsets.all(28.0),
               child: Center(
                 child: Text(
                   'Sign Up',
@@ -75,14 +92,19 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             c.createTextField(
-                title: 'Username', controller: username, enabled: enabled),
+                title: 'Email',
+                keyboardType: TextInputType.emailAddress,
+                controller: username,
+                enabled: enabled),
             c.createTextField(
                 title: 'Password',
+                keyboardType: TextInputType.text,
                 controller: password,
                 isPassword: true,
                 enabled: enabled),
             c.createTextField(
                 title: 'Confirm Password',
+                keyboardType: TextInputType.text,
                 controller: confirmPassword,
                 isPassword: true,
                 enabled: enabled),
@@ -91,7 +113,17 @@ class _SignUpState extends State<SignUp> {
                   const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20),
               child: InkWell(
                 onTap: enabled
-                    ? () {
+                    ? () async {
+                        setState(() {
+                          enabled = false;
+                          isLoading = true;
+                          Future.delayed(const Duration(seconds: 1))
+                              .then((value) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          });
+                        });
                         if (username.text.trim().isEmpty) {
                           showInSnackBar(
                               value: 'Please input username', context: context);
@@ -107,32 +139,42 @@ class _SignUpState extends State<SignUp> {
                           showInSnackBar(
                               value: 'Password mismatched', context: context);
                         } else {
-                          setState(() {
-                            enabled = false;
-                            isLoading = true;
-                            Future.delayed(Duration(seconds: 3)).then((value) {
-                              setState(() {
-                                isLoading = false;
-                              });
+                          try {
+                            await _auth.createUserWithEmailAndPassword(
+                                email: username.text, password: password.text);
+
+                            _firestore
+                                .collection('user')
+                                .doc(studentId)
+                                .update({
+                              'Email': username.text,
                             });
-                          });
+
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                CupertinoPageRoute(builder: (_) => Dashboard()),
+                                (route) => false);
+                          } catch (e) {
+                            showInSnackBar(
+                                value: e.toString(), context: context);
+                          }
                         }
                       }
                     : null,
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent,
+                    color: Colors.greenAccent.shade700,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: isLoading
-                      ? CircularProgressIndicator(
+                      ? const CircularProgressIndicator(
                           color: Colors.white,
                         )
-                      : Text(
-                          'Register',
+                      : const Text(
+                          'Submit',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -141,79 +183,6 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            !enabled
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                            horizontal: 55.0, vertical: 10)
-                        .copyWith(bottom: 0),
-                    child: Text(
-                      'Enter the OTP: ',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  )
-                : SizedBox(),
-            !enabled
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50.0, vertical: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: TextField(
-                        controller: otp,
-                        style: TextStyle(fontSize: 18),
-                        cursorColor: Colors.black,
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.phone,
-                        maxLength: 4,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(4),
-                        ],
-                        decoration: InputDecoration(
-                          counterText: '',
-                          border:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintText: 'OTP',
-                          hintStyle: TextStyle(
-                              color: Colors.black.withOpacity(0.5),
-                              fontSize: 18),
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox(),
-            !enabled
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 100.0, vertical: 20),
-                    child: InkWell(
-                      onTap: () {},
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.greenAccent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox(),
           ],
         ),
       ),

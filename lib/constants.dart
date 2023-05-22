@@ -4,6 +4,7 @@ class Constants {
   Widget createTextField(
       {required String title,
       required TextEditingController controller,
+      TextInputType keyboardType = TextInputType.text,
       bool enabled = true,
       bool isPassword = false}) {
     bool hide = true;
@@ -17,6 +18,7 @@ class Constants {
         child: StatefulBuilder(builder: (ctx, setState) {
           return TextField(
             controller: controller,
+            keyboardType: keyboardType,
             obscureText: isPassword ? hide : false,
             enabled: enabled,
             style: TextStyle(fontSize: 18, color: Colors.white),

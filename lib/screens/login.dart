@@ -1,6 +1,7 @@
 import 'package:alpha/constants.dart';
 import 'package:alpha/screens/dashboard.dart';
-import 'package:alpha/screens/sign_up.dart';
+import 'package:alpha/screens/otp.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final _auth = FirebaseAuth.instance;
+
   bool hidePassword = true;
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -22,8 +25,8 @@ class _LoginState extends State<Login> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(value,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20, color: Colors.white)),
-      duration: Duration(seconds: 2),
+          style: const TextStyle(fontSize: 20, color: Colors.white)),
+      duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.fixed,
       elevation: 5.0,
     ));
@@ -38,7 +41,7 @@ class _LoginState extends State<Login> {
         alignment: Alignment.center,
         height: size.height,
         width: size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
               image: AssetImage('assets/bg_alpha.jpeg'), fit: BoxFit.cover),
         ),
@@ -49,20 +52,20 @@ class _LoginState extends State<Login> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 50, horizontal: 130),
+                      const EdgeInsets.symmetric(vertical: 40, horizontal: 130),
                   child: Container(
                     height: 145,
                     width: 145,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                           image: AssetImage('assets/united.jpeg'),
                           fit: BoxFit.fill),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(28.0),
+                const Padding(
+                  padding: EdgeInsets.all(15.0),
                   child: Center(
                     child: Text(
                       'Sign In',
@@ -73,14 +76,20 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                c.createTextField(title: 'Username', controller: username),
                 c.createTextField(
-                    title: 'Password', controller: password, isPassword: true),
+                    title: 'Username',
+                    keyboardType: TextInputType.emailAddress,
+                    controller: username),
+                c.createTextField(
+                    title: 'Password',
+                    keyboardType: TextInputType.text,
+                    controller: password,
+                    isPassword: true),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 35.0),
                   child: InkWell(
                     onTap: () {},
-                    child: Align(
+                    child: const Align(
                       alignment: Alignment.centerRight,
                       child: Text(
                         'Forgot Password',
@@ -89,14 +98,14 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 30.0, vertical: 20),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (username.text.trim().isEmpty) {
                         showInSnackBar(
                             value: 'Please input username', context: context);
@@ -104,36 +113,49 @@ class _LoginState extends State<Login> {
                         showInSnackBar(
                             value: 'PLease input password', context: context);
                       } else {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        Future.delayed(Duration(seconds: 3)).then((value) {
-                          setState(() {
-                            isLoading = false;
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                CupertinoPageRoute(builder: (_) => Dashboard()),
-                                (route) => false);
-                          });
-                        });
+                        try {
+                          final user = await _auth.signInWithEmailAndPassword(
+                              email: username.text, password: password.text);
+
+                          if (user != null) {
+                            setState(() {
+                              isLoading = true;
+                            });
+
+                            Future.delayed(const Duration(seconds: 1))
+                                .then((value) {
+                              setState(() {
+                                isLoading = false;
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (_) => const Dashboard()),
+                                    (route) => false);
+                              });
+                            });
+                          }
+                        } catch (e) {
+                          showInSnackBar(
+                              value: 'Invalid Credentials', context: context);
+                        }
                       }
                     },
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 15),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.greenAccent,
+                        color: Colors.greenAccent.shade700,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: isLoading
-                          ? Center(
+                          ? const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,
                                 strokeWidth: 3,
                               ),
                             )
-                          : Text(
+                          : const Text(
                               'Login',
                               style: TextStyle(
                                   color: Colors.white,
@@ -144,23 +166,27 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 isLoading
-                    ? SizedBox()
+                    ? const SizedBox()
                     : Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(context,
-                                CupertinoPageRoute(builder: (_) => SignUp()));
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (_) => const Otp(),
+                              ),
+                            );
                           },
                           borderRadius: BorderRadius.circular(20),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 15),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Color(0xFF174AFD),
+                              color: Colors.lightBlueAccent.shade700,
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Text(
+                            child: const Text(
                               'SignUp',
                               style: TextStyle(
                                   color: Colors.white,
