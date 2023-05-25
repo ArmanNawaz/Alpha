@@ -135,6 +135,10 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
         ),
       ),
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/chat_bk.jpg'), fit: BoxFit.cover),
+        ),
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.height,
         child: WillPopScope(
@@ -170,7 +174,7 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
                           minLines: 1,
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: 'Type a message',
+                            hintText: '    Type a message',
                             suffixIcon:
                                 Row(mainAxisSize: MainAxisSize.min, children: [
                               IconButton(

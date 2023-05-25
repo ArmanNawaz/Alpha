@@ -3,22 +3,25 @@ import 'package:flutter/material.dart';
 import 'chatModel.dart';
 
 class UserPage extends StatefulWidget {
-  const UserPage({Key? key}) : super(key: key);
+  const UserPage({Key? key, required this.details}) : super(key: key);
+
+  final List details;
 
   @override
   State<UserPage> createState() => _UserPageState();
 }
 
 class _UserPageState extends State<UserPage> {
+  List<ChatModel> users = [
+    ChatModel(name: 'Jugal Singh', course: 'BTech', branch: 'CSE'),
+    ChatModel(name: 'Ashish Srivastava', course: 'BTech', branch: 'CSE'),
+    ChatModel(name: 'Prabhat Srivastava', course: 'BTech', branch: 'EE'),
+    ChatModel(name: 'Anand Mishra', course: 'BTech', branch: 'ME'),
+    ChatModel(name: 'Niket Singh', course: 'BTech', branch: 'CSE'),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    List<ChatModel2> users = [
-      ChatModel2(name: 'Jugal Singh', course: 'BTech', branch: 'CSE'),
-      ChatModel2(name: 'Ashish Srivastava', course: 'BTech', branch: 'CSE'),
-      ChatModel2(name: 'Prabhat Srivastava', course: 'BTech', branch: 'EE'),
-      ChatModel2(name: 'Anand Mishra', course: 'BTech', branch: 'ME'),
-      ChatModel2(name: 'Niket Singh', course: 'BTech', branch: 'CSE'),
-    ];
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -27,8 +30,8 @@ class _UserPageState extends State<UserPage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'Select User',
                   style: TextStyle(
                     fontSize: 19,
@@ -36,8 +39,8 @@ class _UserPageState extends State<UserPage> {
                   ),
                 ),
                 Text(
-                  '256 Users',
-                  style: TextStyle(fontSize: 13),
+                  '${widget.details.length} Users',
+                  style: const TextStyle(fontSize: 13),
                 ),
               ],
             ),

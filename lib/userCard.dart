@@ -1,15 +1,26 @@
 import 'package:alpha/screens/chatTabs/chatModel.dart';
+import 'package:alpha/screens/chatTabs/individualChatPage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserCard extends StatelessWidget {
   const UserCard({Key? key, required this.user}) : super(key: key);
 
-  final ChatModel2 user;
+  final ChatModel user;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => IndividualChatPage(
+              chatModel: user,
+            ),
+          ),
+        );
+      },
       child: ListTile(
         leading: const CircleAvatar(
           radius: 23,

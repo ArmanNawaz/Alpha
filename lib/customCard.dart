@@ -12,11 +12,13 @@ class CustomCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (_) => IndividualChatPage(
-                      chatModel: chatModel,
-                    )));
+          context,
+          CupertinoPageRoute(
+            builder: (_) => IndividualChatPage(
+              chatModel: chatModel,
+            ),
+          ),
+        );
       },
       child: Column(
         children: [
