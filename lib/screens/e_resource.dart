@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:file_picker/file_picker.dart';
-import 'package:easy_pdf_viewer/easy_pdf_viewer.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 
 class EResource extends StatefulWidget {
   const EResource({Key? key}) : super(key: key);
@@ -59,8 +59,43 @@ class _EResourceState extends State<EResource> {
               return ListView.builder(
                   itemCount: snapshot.data!.items.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(snapshot.data!.items[index].name),
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: 80,
+                          alignment: Alignment.center,
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.picture_as_pdf,
+                              size: 28,
+                              color: Colors.black,
+                            ),
+                            title: Text(
+                              snapshot.data!.items[index].name,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.centerRight,
+                          padding: EdgeInsets.only(right: 20, bottom: 8),
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            child: TextButton(
+                              onPressed: () {},
+                              child: Icon(
+                                Icons.download,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          height: 2,
+                          thickness: 2,
+                        )
+                      ],
                     );
                   });
             }

@@ -1,10 +1,13 @@
+import 'package:alpha/change_password.dart';
 import 'package:alpha/screens/e_resource.dart';
+import 'package:alpha/screens/gallery.dart';
 import 'package:alpha/screens/login.dart';
 import 'package:alpha/screens/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'chat.dart';
 import 'chat_screen.dart';
 
@@ -168,6 +171,8 @@ class _DashboardState extends State<Dashboard> {
               ListTile(
                   onTap: () {
                     Navigator.pop(context);
+                    Navigator.push(context,
+                        CupertinoPageRoute(builder: (_) => ChangePassword()));
                   },
                   title: const Padding(
                     padding: EdgeInsets.only(left: 10.0),
@@ -460,23 +465,29 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                 ),
-                Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(10),
-                  height: 150,
-                  width: 150,
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/Gallery.png',
-                        height: 100,
-                        width: 100,
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Text('GALLERY')
-                    ],
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context, CupertinoPageRoute(builder: (_) => Gallery()));
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(10),
+                    height: 150,
+                    width: 150,
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/Gallery.png',
+                          height: 100,
+                          width: 100,
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        const Text('GALLERY')
+                      ],
+                    ),
                   ),
                 )
               ],
