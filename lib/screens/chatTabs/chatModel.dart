@@ -4,14 +4,18 @@ class ChatModel {
       this.timer,
       this.currentMessage,
       this.branch,
-      this.course});
+      this.course,
+      this.contact,
+      this.year});
 
   String name;
+  var year;
   var timer;
   var currentMessage;
   // late String profileUrl;
   var course;
   var branch;
+  var contact;
 }
 
 // class ChatModel2 {

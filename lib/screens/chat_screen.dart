@@ -41,14 +41,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        // actions: <Widget>[
-        //   IconButton(
-        //       icon: const Icon(Icons.close),
-        //       onPressed: () {
-        //         _auth.signOut();
-        //         Navigator.pop(context);
-        //       }),
-        // ],
         title: const Text('Discussion'),
         backgroundColor: Colors.lightBlue[800],
       ),

@@ -29,6 +29,8 @@ class _ProfileState extends State<Profile> {
   final _firestore = FirebaseFirestore.instance;
   var loggedInUser;
 
+  bool fetch = false;
+
   final _storage = FirebaseStorage.instance;
   late String fileName;
   late String filePath;
@@ -84,7 +86,9 @@ class _ProfileState extends State<Profile> {
                   year = s['Year'];
                   gender = s['Gender'];
                   dob = s['DOB'];
-                  // imageUrl = s['ImageUrl'];
+                  imageUrl = s['ImageUrl'].toString();
+                  fetch = true;
+                  print(imageUrl);
 
                   details = [
                     'Student Id:  $studentId',
@@ -128,19 +132,26 @@ class _ProfileState extends State<Profile> {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 65,
+                      height: 60,
                     ),
                     CircleAvatar(
-                      radius: 50,
-                      // child: imageUrl.isNotEmpty
-                      //     ? Image.network(
-                      //         imageUrl,
-                      //         fit: BoxFit.cover,
-                      //       ):
-                      child: Image.asset(
-                        "assets/profile.png",
-                        fit: BoxFit.cover,
-                      ),
+                      radius: 55,
+                      child: imageUrl == 'null' || fetch == false
+                          ? Image.asset(
+                              "assets/profile.png",
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              // padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                // color: Colors.white,
+                                borderRadius: BorderRadius.circular(55),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(imageUrl),
+                                ),
+                              ),
+                            ),
                     ),
                     const SizedBox(
                       height: 17,

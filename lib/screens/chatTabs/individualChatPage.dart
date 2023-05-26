@@ -1,7 +1,14 @@
 import 'package:alpha/screens/camera_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../constant2.dart';
+// import '../chat_screen.dart';
 import 'chatModel.dart';
+
+final _firestore = FirebaseFirestore.instance;
+var loggedInUser;
 
 class IndividualChatPage extends StatefulWidget {
   const IndividualChatPage({Key? key, required this.chatModel})
@@ -15,6 +22,27 @@ class IndividualChatPage extends StatefulWidget {
 
 class _IndividualChatPageState extends State<IndividualChatPage> {
   bool show = false;
+  final messageTextController = TextEditingController();
+  final _auth = FirebaseAuth.instance;
+
+  late String messageText;
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Widget bottomSheet() {
     return Container(
@@ -123,9 +151,9 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const Text(
-                'last seen today at 12:35',
-                style: TextStyle(
+              Text(
+                widget.chatModel.contact,
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.normal,
                 ),
@@ -137,84 +165,175 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/chat_bk.jpg'), fit: BoxFit.cover),
+            image: AssetImage('assets/chat_bk.jpg'),
+            fit: BoxFit.cover,
+          ),
         ),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.height,
-        child: WillPopScope(
-          onWillPop: () {
-            if (show) {
-              setState(() {
-                show = false;
-              });
-            } else {
-              Navigator.pop(context);
-            }
-            return Future.value(false);
-          },
-          child: Stack(
-            children: [
-              ListView(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width - 60,
-                      child: Card(
-                        margin:
-                            const EdgeInsets.only(left: 2, right: 2, bottom: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: TextFormField(
-                          textAlignVertical: TextAlignVertical.center,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 5,
-                          minLines: 1,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: '    Type a message',
-                            suffixIcon:
-                                Row(mainAxisSize: MainAxisSize.min, children: [
-                              IconButton(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      backgroundColor: Colors.transparent,
-                                      context: context,
-                                      builder: (builder) => bottomSheet());
-                                },
-                                icon: const Icon(
-                                  Icons.attach_file,
-                                  color: Color(0xff075E54),
-                                ),
+        child: Column(
+          children: [
+            MessagesStream(),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width - 60,
+                    child: Card(
+                      margin:
+                          const EdgeInsets.only(left: 2, right: 2, bottom: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: TextFormField(
+                        textAlignVertical: TextAlignVertical.center,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5,
+                        minLines: 1,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: '    Type a message',
+                          suffixIcon:
+                              Row(mainAxisSize: MainAxisSize.min, children: [
+                            IconButton(
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    builder: (builder) => bottomSheet());
+                              },
+                              icon: const Icon(
+                                Icons.attach_file,
+                                color: Color(0xff075E54),
                               ),
-                            ]),
-                            contentPadding: const EdgeInsets.all(5),
-                          ),
+                            ),
+                          ]),
+                          contentPadding: const EdgeInsets.all(5),
                         ),
                       ),
                     ),
-                    Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: 8, right: 5, left: 2),
-                        child: CircleAvatar(
-                          backgroundColor: const Color(0xff075E54),
-                          radius: 25,
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.send,
-                              color: Colors.white,
-                            ),
+                  ),
+                  Padding(
+                      padding:
+                          const EdgeInsets.only(bottom: 8, right: 5, left: 2),
+                      child: CircleAvatar(
+                        backgroundColor: const Color(0xff075E54),
+                        radius: 25,
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.white,
                           ),
-                        )),
-                  ],
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MessagesStream extends StatelessWidget {
+  const MessagesStream({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _firestore.collection('messages').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.lightBlueAccent,
+            ),
+          );
+        }
+        final messages = snapshot.data?.docs.reversed;
+        List<MessageBubble> messageBubbles = [];
+        for (var message in messages!) {
+          final messageText = message['text'];
+          final messageSender = message['sender'];
+
+          final currentUser = loggedInUser.email;
+
+          final messageBubble = MessageBubble(
+            sender: messageSender,
+            text: messageText,
+            isMe: currentUser == messageSender,
+          );
+          messageBubbles.add(messageBubble);
+        }
+        return Expanded(
+          child: ListView(
+            reverse: true,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            children: messageBubbles,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MessageBubble extends StatelessWidget {
+  MessageBubble(
+      {super.key,
+      required this.sender,
+      required this.text,
+      required this.isMe});
+
+  final String sender;
+  final String text;
+  final bool isMe;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: isMe
+          ? const EdgeInsets.only(left: 10.0, top: 10.0, bottom: 10.0)
+          : const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 10.0),
+      child: Column(
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(
+            sender,
+            style: const TextStyle(
+              fontSize: 12.0,
+              color: Colors.black54,
+            ),
+          ),
+          Material(
+            borderRadius: isMe
+                ? const BorderRadius.only(
+                    topLeft: Radius.circular(15.0),
+                    bottomLeft: Radius.circular(15.0),
+                    bottomRight: Radius.circular(15.0),
+                  )
+                : const BorderRadius.only(
+                    topRight: Radius.circular(10.0),
+                    bottomLeft: Radius.circular(10.0),
+                    bottomRight: Radius.circular(10.0),
+                  ),
+            elevation: 10.0,
+            color: isMe ? Colors.lightBlueAccent[400] : Colors.white,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 15.0,
+                  color: isMe ? Colors.white : Colors.black54,
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

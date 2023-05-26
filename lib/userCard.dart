@@ -37,7 +37,7 @@ class UserCard extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          '${user.course} ${user.branch}',
+          '${user.course}  ${user.branch}  ${user.year} Year',
           style: const TextStyle(fontSize: 13),
         ),
       ),

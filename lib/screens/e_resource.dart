@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -66,32 +65,31 @@ class _EResourceState extends State<EResource> {
                           height: 80,
                           alignment: Alignment.center,
                           child: ListTile(
-                            leading: Icon(
-                              Icons.picture_as_pdf,
-                              size: 28,
-                              color: Colors.black,
+                            leading: Image.asset(
+                              "assets/pdf.png",
+                              fit: BoxFit.cover,
                             ),
                             title: Text(
                               snapshot.data!.items[index].name,
-                              style: TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             ),
                           ),
                         ),
                         Container(
                           alignment: Alignment.centerRight,
-                          padding: EdgeInsets.only(right: 20, bottom: 8),
+                          padding: const EdgeInsets.only(right: 20, bottom: 8),
                           child: CircleAvatar(
                             backgroundColor: Colors.blue,
                             child: TextButton(
                               onPressed: () {},
-                              child: Icon(
+                              child: const Icon(
                                 Icons.download,
                                 color: Colors.white,
                               ),
                             ),
                           ),
                         ),
-                        Divider(
+                        const Divider(
                           height: 2,
                           thickness: 2,
                         )

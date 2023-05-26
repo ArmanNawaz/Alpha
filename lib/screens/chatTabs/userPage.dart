@@ -12,13 +12,27 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  List<ChatModel> users = [
-    ChatModel(name: 'Jugal Singh', course: 'BTech', branch: 'CSE'),
-    ChatModel(name: 'Ashish Srivastava', course: 'BTech', branch: 'CSE'),
-    ChatModel(name: 'Prabhat Srivastava', course: 'BTech', branch: 'EE'),
-    ChatModel(name: 'Anand Mishra', course: 'BTech', branch: 'ME'),
-    ChatModel(name: 'Niket Singh', course: 'BTech', branch: 'CSE'),
-  ];
+  void userList() {
+    for (int i = 0; i < widget.details.length; i++) {
+      setState(() {
+        users.add(ChatModel(
+          name: widget.details[i]['Name'],
+          course: widget.details[i]['Course'],
+          year: widget.details[i]['Year'],
+          branch: widget.details[i]['Branch'],
+          contact: widget.details[i]['Contact'],
+        ));
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userList();
+  }
+
+  List<ChatModel> users = [];
 
   @override
   Widget build(BuildContext context) {

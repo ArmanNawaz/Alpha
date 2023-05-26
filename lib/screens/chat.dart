@@ -58,6 +58,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
                 });
               }
               details.add(s);
+              print(details);
             }));
 
     // var details2 = _firestore.collection('personal chats')
@@ -77,44 +78,41 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(primaryColor: Colors.lightBlue),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Chat',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Chat',
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
           ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.search),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          )
+        ],
+        bottom: TabBar(
+          tabs: const [
+            Tab(
+              text: 'Chats',
+            ),
+            Tab(
+              text: 'Users',
             )
           ],
-          bottom: TabBar(
-            tabs: const [
-              Tab(
-                text: 'Chats',
-              ),
-              Tab(
-                text: 'Users',
-              )
-            ],
-            controller: tabController,
-          ),
-        ),
-        body: TabBarView(
           controller: tabController,
-          children: [
-            const ChatPage(),
-            UserPage(
-              details: details,
-            ),
-          ],
         ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          const ChatPage(),
+          UserPage(
+            details: details,
+          ),
+        ],
       ),
     );
   }
