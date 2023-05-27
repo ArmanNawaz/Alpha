@@ -47,6 +47,8 @@ dependencies:
   path:
   image_picker: ^0.8.7+5
   transparent_image: ^2.0.1
+  flutter_pdfview: ^1.3.1
+  quickalert:
 
 dev_dependencies:
   flutter_test:

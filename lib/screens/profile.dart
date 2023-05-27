@@ -88,7 +88,7 @@ class _ProfileState extends State<Profile> {
                   dob = s['DOB'];
                   imageUrl = s['ImageUrl'].toString();
                   fetch = true;
-                  print(imageUrl);
+                  // print(imageUrl);
 
                   details = [
                     'Student Id:  $studentId',

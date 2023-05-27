@@ -1,7 +1,12 @@
 import 'dart:io';
+import 'package:alpha/screens/pdf_viewer.dart';
+import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EResource extends StatefulWidget {
   const EResource({Key? key}) : super(key: key);
@@ -24,6 +29,35 @@ class _EResourceState extends State<EResource> {
     ListResult listResult = await storage.ref("PDFs").listAll();
     return listResult;
   }
+
+  static Future<File> loadFirebase(String url) async {
+    var bytes;
+    try {
+      final refPDF = FirebaseStorage.instance.ref().child('PDFs/$url');
+      bytes = await refPDF.getData();
+      // print(bytes);
+    } catch (e) {}
+
+    return _storeFile(url, bytes as List<int>);
+  }
+
+  static Future<File> _storeFile(String url, List<int> bytes) async {
+    final filename = basename(url);
+    final dir = await getApplicationDocumentsDirectory();
+
+    final file = File('${dir.path}/$filename');
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
+  void openPDF(BuildContext context, File file) => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => PDFViewerPage(
+            file: file,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +105,7 @@ class _EResourceState extends State<EResource> {
                             ),
                             title: Text(
                               snapshot.data!.items[index].name,
-                              style: const TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 19),
                             ),
                           ),
                         ),
@@ -81,7 +115,16 @@ class _EResourceState extends State<EResource> {
                           child: CircleAvatar(
                             backgroundColor: Colors.blue,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                final url = snapshot.data!.items[index].name;
+                                print(url);
+                                final file = await loadFirebase(url);
+
+                                if (file == null) {
+                                  return;
+                                }
+                                openPDF(context, file);
+                              },
                               child: const Icon(
                                 Icons.download,
                                 color: Colors.white,

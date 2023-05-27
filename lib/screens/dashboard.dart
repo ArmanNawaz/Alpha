@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quickalert/quickalert.dart';
 
 import 'chat.dart';
 import 'chat_screen.dart';
@@ -21,6 +22,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  late String option;
+
   String studentId = '';
   String name = '';
   // String rollNo = '';
@@ -28,10 +31,12 @@ class _DashboardState extends State<Dashboard> {
   // String contact = '';
   String branch = '';
   String course = '';
+  String imageUrl = '';
   // String year = '';
   // String dob = '';
   // String gender = '';
   // List<String> details = [];
+  bool fetch = false;
 
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
@@ -67,22 +72,12 @@ class _DashboardState extends State<Dashboard> {
                   // contact = s['Contact'];
                   course = s['Course'];
                   branch = s['Branch'];
+                  imageUrl = s['ImageUrl'].toString();
                   // year = s['Year'];
                   // gender = s['Gender'];
                   // dob = s['DOB'];
-
-                  // details = [
-                  //   'Student Id:   $studentId',
-                  //   name,
-                  //   email,
-                  //   rollNo,
-                  //   contact,
-                  //   course,
-                  //   branch,
-                  //   year,
-                  //   dob,
-                  //   gender
-                  // ];
+                  fetch = true;
+                  // print(imageUrl);
                 });
               }
             }));
@@ -113,14 +108,24 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(20.0),
-                      child: Container(
-                        height: 80,
-                        width: 80,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/profile.png'),
-                          ),
-                        ),
+                      child: CircleAvatar(
+                        radius: 43,
+                        child: imageUrl == 'null' || fetch == false
+                            ? Image.asset(
+                                "assets/profile.png",
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                // padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  // color: Colors.white,
+                                  borderRadius: BorderRadius.circular(45),
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(imageUrl),
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                     Column(
@@ -152,22 +157,6 @@ class _DashboardState extends State<Dashboard> {
               const SizedBox(
                 height: 10,
               ),
-              ListTile(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  title: const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      'Notification',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  trailing: const Icon(
-                    Icons.notifications_none,
-                    color: Colors.black,
-                  )),
               ListTile(
                   onTap: () {
                     Navigator.pop(context);
@@ -209,22 +198,6 @@ class _DashboardState extends State<Dashboard> {
                   title: const Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: Text(
-                      'Review',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  trailing: const Icon(
-                    Icons.reviews_outlined,
-                    color: Colors.black,
-                  )),
-              ListTile(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  title: const Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: Text(
                       'About Us',
                       textAlign: TextAlign.start,
                       style: TextStyle(fontSize: 20),
@@ -236,11 +209,51 @@ class _DashboardState extends State<Dashboard> {
                   )),
               ListTile(
                   onTap: () {
-                    _auth.signOut();
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        CupertinoPageRoute(builder: (_) => const Login()),
-                        (route) => false);
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Container(
+                            child: AlertDialog(
+                              backgroundColor: Colors.black,
+                              title: const Text(
+                                'Logout?',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    _auth.signOut();
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (_) => const Login()),
+                                        (route) => false);
+                                  },
+                                  child: const Text(
+                                    'Yes',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        });
                   },
                   title: const Padding(
                     padding: EdgeInsets.only(left: 10.0),
@@ -280,17 +293,25 @@ class _DashboardState extends State<Dashboard> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Container(
-                          margin:
-                              const EdgeInsets.only(left: 15.0, right: 10.0),
-                          height: 80,
-                          width: 80,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/profile.png'),
-                            ),
-                          ),
+                        padding: const EdgeInsets.all(20.0),
+                        child: CircleAvatar(
+                          radius: 45,
+                          child: imageUrl == 'null' || fetch == false
+                              ? Image.asset(
+                                  "assets/profile.png",
+                                  fit: BoxFit.cover,
+                                )
+                              : Container(
+                                  // padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    // color: Colors.white,
+                                    borderRadius: BorderRadius.circular(45),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(imageUrl),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                       Column(
