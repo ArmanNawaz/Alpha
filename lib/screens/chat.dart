@@ -22,6 +22,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
   String year = '';
   String dob = '';
   String gender = '';
+  String imageUrl = '';
   List details = [];
   List details2 = [];
 
@@ -55,9 +56,13 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
                   // email = s['Email'];
                   course = s['Course'];
                   branch = s['Branch'];
+                  imageUrl = s['ImageUrl'].toString();
                 });
               }
-              details.add(s);
+              setState(() {
+                details.add(s);
+              });
+
               print(details);
             }));
 
@@ -70,9 +75,7 @@ class _ChatState extends State<Chat> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     getCurrentUserDetail();
   }
 

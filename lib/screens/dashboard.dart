@@ -7,10 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:quickalert/quickalert.dart';
-
 import 'chat.dart';
 import 'chat_screen.dart';
+import 'package:alpha/screens/event.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({
@@ -291,6 +290,7 @@ class _DashboardState extends State<Dashboard> {
                   height: 130,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -302,7 +302,7 @@ class _DashboardState extends State<Dashboard> {
                                   fit: BoxFit.cover,
                                 )
                               : Container(
-                                  // padding: const EdgeInsets.all(10),
+                                  // padding: const EdgeInsets.all(30),
                                   decoration: BoxDecoration(
                                     // color: Colors.white,
                                     borderRadius: BorderRadius.circular(45),
@@ -339,7 +339,10 @@ class _DashboardState extends State<Dashboard> {
                                 fontWeight: FontWeight.w400),
                           )
                         ],
-                      )
+                      ),
+                      const SizedBox(
+                        width: 70,
+                      ),
                     ],
                   ),
                 ),
@@ -374,7 +377,10 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context, CupertinoPageRoute(builder: (_) => Event()));
+                  },
                   child: Container(
                     color: Colors.white,
                     padding: const EdgeInsets.all(10),

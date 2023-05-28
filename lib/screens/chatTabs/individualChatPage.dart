@@ -21,9 +21,23 @@ class IndividualChatPage extends StatefulWidget {
 }
 
 class _IndividualChatPageState extends State<IndividualChatPage> {
+  String loggedInUserStudentId = '';
+  String name = '';
+  // String rollNo = '';
+  // String email = '';
+  // String contact = '';
+  // String branch = '';
+  // String course = '';
+  // String imageUrl = '';
+  // String year = '';
+  // String dob = '';
+  // String gender = '';
+
   bool show = false;
   final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
+
+  late String studentId;
 
   late String messageText;
 
@@ -33,7 +47,7 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
     getCurrentUser();
   }
 
-  void getCurrentUser() {
+  void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
       if (user != null) {
@@ -42,6 +56,29 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
     } catch (e) {
       print(e);
     }
+
+    await _firestore
+        .collection('user')
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              var s = element.data();
+              if (loggedInUser.email == s['Email']) {
+                setState(() {
+                  studentId = element.id;
+                  name = s['Name'];
+                  // email = s['Email'];
+                  // rollNo = s['University Roll No'];
+                  // contact = s['Contact'];
+                  // course = s['Course'];
+                  // branch = s['Branch'];
+                  // imageUrl = s['ImageUrl'].toString();
+                  // year = s['Year'];
+                  // gender = s['Gender'];
+                  // dob = s['DOB'];
+                  // print(imageUrl);
+                });
+              }
+            }));
   }
 
   Widget bottomSheet() {
@@ -171,61 +208,42 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
         ),
         child: Column(
           children: [
-            MessagesStream(),
-            Align(
-              alignment: Alignment.bottomCenter,
+            MessagesStream(
+              studentId: widget.chatModel.studentId,
+              loggedInUserStudentId: loggedInUserStudentId,
+            ),
+            Container(
+              decoration: kMessageContainerDecoration,
               child: Row(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width - 60,
-                    child: Card(
-                      margin:
-                          const EdgeInsets.only(left: 2, right: 2, bottom: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      child: TextFormField(
-                        textAlignVertical: TextAlignVertical.center,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 5,
-                        minLines: 1,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '    Type a message',
-                          suffixIcon:
-                              Row(mainAxisSize: MainAxisSize.min, children: [
-                            IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    backgroundColor: Colors.transparent,
-                                    context: context,
-                                    builder: (builder) => bottomSheet());
-                              },
-                              icon: const Icon(
-                                Icons.attach_file,
-                                color: Color(0xff075E54),
-                              ),
-                            ),
-                          ]),
-                          contentPadding: const EdgeInsets.all(5),
-                        ),
-                      ),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: messageTextController,
+                      onChanged: (value) {
+                        messageText = value;
+                      },
+                      decoration: kMessageTextFieldDecoration,
                     ),
                   ),
-                  Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 8, right: 5, left: 2),
-                      child: CircleAvatar(
-                        backgroundColor: const Color(0xff075E54),
-                        radius: 25,
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          ),
-                        ),
-                      )),
+                  TextButton(
+                    onPressed: () {
+                      var time = DateTime.now().toString();
+                      time = time.replaceAll('-', '');
+                      time = time.replaceAll(':', '');
+                      time = time.replaceAll(' ', '');
+                      time = time.replaceAll('.', '');
+                      messageTextController.clear();
+                      _firestore.collection('personal messages').doc(time).set({
+                        'text': messageText,
+                        'sender': loggedInUser.email,
+                      });
+                    },
+                    child: const Text(
+                      'Send',
+                      style: kSendButtonTextStyle,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -237,12 +255,19 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
 }
 
 class MessagesStream extends StatelessWidget {
-  const MessagesStream({super.key});
+  const MessagesStream({super.key, this.studentId, this.loggedInUserStudentId});
+
+  final studentId;
+  final loggedInUserStudentId;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('messages').snapshots(),
+      stream: _firestore
+          .collection('personal messages')
+          // .doc()
+          // .collection(studentId)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

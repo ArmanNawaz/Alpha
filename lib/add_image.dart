@@ -3,7 +3,6 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:path/path.dart' as Path;
 
 class AddImage extends StatefulWidget {

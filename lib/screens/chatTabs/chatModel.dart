@@ -6,9 +6,12 @@ class ChatModel {
       this.branch,
       this.course,
       this.contact,
+      this.imageUrl,
+      this.studentId,
       this.year});
 
   String name;
+  var studentId;
   var year;
   var timer;
   var currentMessage;
@@ -16,6 +19,7 @@ class ChatModel {
   var course;
   var branch;
   var contact;
+  var imageUrl;
 }
 
 // class ChatModel2 {

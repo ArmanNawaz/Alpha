@@ -12,6 +12,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  List<ChatModel> users = [];
+
   void userList() {
     for (int i = 0; i < widget.details.length; i++) {
       setState(() {
@@ -21,9 +23,12 @@ class _UserPageState extends State<UserPage> {
           year: widget.details[i]['Year'],
           branch: widget.details[i]['Branch'],
           contact: widget.details[i]['Contact'],
+          imageUrl: widget.details[i]['ImageURL'].toString(),
+          studentId: widget.details[i]['Student Id'],
         ));
       });
     }
+    print(users);
   }
 
   @override
@@ -31,8 +36,6 @@ class _UserPageState extends State<UserPage> {
     super.initState();
     userList();
   }
-
-  List<ChatModel> users = [];
 
   @override
   Widget build(BuildContext context) {
