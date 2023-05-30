@@ -58,12 +58,12 @@ class _LoginState extends State<Login> {
                   child: Container(
                     height: 145,
                     width: 145,
-                    // decoration: BoxDecoration(
-                    //   borderRadius: BorderRadius.circular(20),
-                    //   image: const DecorationImage(
-                    //       image: AssetImage('assets/united.jpeg'),
-                    //       fit: BoxFit.fill),
-                    // ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      // image: const DecorationImage(
+                      //     image: AssetImage('assets/united.jpeg'),
+                      //     fit: BoxFit.fill),
+                    ),
                   ),
                 ),
                 const Padding(
@@ -92,9 +92,11 @@ class _LoginState extends State<Login> {
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (_) => const ForgotPassword()));
+                        context,
+                        CupertinoPageRoute(
+                          builder: (_) => const ForgotPassword(),
+                        ),
+                      );
                     },
                     child: const Align(
                       alignment: Alignment.centerRight,

@@ -18,10 +18,11 @@ class EResource extends StatefulWidget {
 class _EResourceState extends State<EResource> {
   final storage = FirebaseStorage.instance;
 
-  Future<void> uploadPDF(String fileName, String filePath) async {
+  Future<void> uploadPDF(String fileName, String filePath, context) async {
     File file = File(filePath);
     try {
       await storage.ref('PDFs/$fileName').putFile(file);
+      showInSnackBar(value: 'Pdf uploaded successfully', context: context);
     } catch (e) {}
   }
 
@@ -59,6 +60,17 @@ class _EResourceState extends State<EResource> {
         ),
       );
 
+  void showInSnackBar({required String value, required BuildContext context}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(value,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20, color: Colors.white)),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.fixed,
+      elevation: 5.0,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +89,7 @@ class _EResourceState extends State<EResource> {
           } else {
             final filePath = result.files.single.path;
             final fileName = result.files.single.name;
-            uploadPDF(fileName, filePath!);
+            uploadPDF(fileName, filePath!, context);
           }
         },
       ),

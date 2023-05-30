@@ -15,6 +15,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  String studentId = '';
+  String name = '';
+
   final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   late String messageText;
@@ -25,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
     getCurrentUser();
   }
 
-  void getCurrentUser() {
+  void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
       if (user != null) {
@@ -34,6 +37,29 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       print(e);
     }
+
+    await _firestore
+        .collection('user')
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              var s = element.data();
+              if (loggedInUser.email == s['Email']) {
+                setState(() {
+                  studentId = element.id;
+                  name = s['Name'];
+                  // email = s['Email'];
+                  // rollNo = s['University Roll No'];
+                  // contact = s['Contact'];
+                  // course = s['Course'];
+                  // branch = s['Branch'];
+                  // imageUrl = s['ImageUrl'].toString();
+                  // year = s['Year'];
+                  // gender = s['Gender'];
+                  // dob = s['DOB'];
+                  // print(imageUrl);
+                });
+              }
+            }));
   }
 
   @override
@@ -51,7 +77,9 @@ class _ChatScreenState extends State<ChatScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const MessagesStream(),
+              MessagesStream(
+                name: name,
+              ),
               Container(
                 decoration: kMessageContainerDecoration,
                 child: Row(
@@ -76,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         messageTextController.clear();
                         _firestore.collection('messages').doc(time).set({
                           'text': messageText,
-                          'sender': loggedInUser.email,
+                          'sender': name,
                         });
                       },
                       child: const Text(
@@ -96,7 +124,9 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessagesStream extends StatelessWidget {
-  const MessagesStream({super.key});
+  const MessagesStream({super.key, this.name});
+
+  final name;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +151,7 @@ class MessagesStream extends StatelessWidget {
           final messageBubble = MessageBubble(
             sender: messageSender,
             text: messageText,
-            isMe: currentUser == messageSender,
+            isMe: name == messageSender,
           );
           messageBubbles.add(messageBubble);
         }

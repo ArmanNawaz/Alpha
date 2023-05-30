@@ -20,6 +20,7 @@ class _UserCardState extends State<UserCard> {
         print(widget.user.imageUrl);
         print(widget.user.name);
         print(widget.user.studentId);
+        print(widget.user.course);
         Navigator.push(
           context,
           CupertinoPageRoute(
@@ -45,7 +46,7 @@ class _UserCardState extends State<UserCard> {
           ),
         ),
         subtitle: Text(
-          '${widget.user.course}  ${widget.user.branch}  ${widget.user.year} Year',
+          '${widget.user.course}  ${widget.user.branch}  ${widget.user.year}',
           style: const TextStyle(fontSize: 13),
         ),
       ),

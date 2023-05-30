@@ -124,12 +124,12 @@ class _OtpState extends State<Otp> {
               child: Container(
                 height: 145,
                 width: 145,
-                // decoration: BoxDecoration(
-                //   borderRadius: BorderRadius.circular(20),
-                //   image: const DecorationImage(
-                //       image: AssetImage('assets/united.jpeg'),
-                //       fit: BoxFit.fill),
-                // ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  // image: const DecorationImage(
+                  //     image: AssetImage('assets/united.jpeg'),
+                  //     fit: BoxFit.fill),
+                ),
               ),
             ),
             const Padding(

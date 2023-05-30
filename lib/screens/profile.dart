@@ -43,6 +43,8 @@ class _ProfileState extends State<Profile> {
       Reference reference = _storage.ref().child('Profile').child(studentId);
       UploadTask uploadTask = reference.putFile(file);
 
+      showInSnackBar(value: "Profile photo changed", context: context);
+
       await uploadTask.whenComplete(() async {
         uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
       });
@@ -53,6 +55,17 @@ class _ProfileState extends State<Profile> {
         }).then((value) => null);
       }
     } catch (e) {}
+  }
+
+  void showInSnackBar({required String value, required BuildContext context}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(value,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 20, color: Colors.white)),
+      duration: const Duration(seconds: 2),
+      behavior: SnackBarBehavior.fixed,
+      elevation: 5.0,
+    ));
   }
 
   @override

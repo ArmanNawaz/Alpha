@@ -21,7 +21,8 @@ class IndividualChatPage extends StatefulWidget {
 }
 
 class _IndividualChatPageState extends State<IndividualChatPage> {
-  String loggedInUserStudentId = '';
+  // String loggedInUserStudentId = '';
+  String studentId = '';
   String name = '';
   // String rollNo = '';
   // String email = '';
@@ -37,7 +38,7 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
   final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
 
-  late String studentId;
+  late String studentId2;
 
   late String messageText;
 
@@ -171,7 +172,8 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
             ),
             const CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.greenAccent,
+              backgroundColor: Colors.yellow,
+              child: Icon(Icons.person),
             ),
           ],
         ),
@@ -209,8 +211,9 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
         child: Column(
           children: [
             MessagesStream(
-              studentId: widget.chatModel.studentId,
-              loggedInUserStudentId: loggedInUserStudentId,
+              studentId2: widget.chatModel.studentId,
+              studentId: studentId,
+              name: name,
             ),
             Container(
               decoration: kMessageContainerDecoration,
@@ -255,19 +258,16 @@ class _IndividualChatPageState extends State<IndividualChatPage> {
 }
 
 class MessagesStream extends StatelessWidget {
-  const MessagesStream({super.key, this.studentId, this.loggedInUserStudentId});
+  const MessagesStream({super.key, this.studentId2, this.studentId, this.name});
 
+  final studentId2;
   final studentId;
-  final loggedInUserStudentId;
+  final name;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore
-          .collection('personal messages')
-          // .doc()
-          // .collection(studentId)
-          .snapshots(),
+      stream: _firestore.collection('personal messages').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(
@@ -285,7 +285,7 @@ class MessagesStream extends StatelessWidget {
           final currentUser = loggedInUser.email;
 
           final messageBubble = MessageBubble(
-            sender: messageSender,
+            sender: name,
             text: messageText,
             isMe: currentUser == messageSender,
           );
@@ -329,7 +329,7 @@ class MessageBubble extends StatelessWidget {
             sender,
             style: const TextStyle(
               fontSize: 12.0,
-              color: Colors.black54,
+              color: Colors.white,
             ),
           ),
           Material(

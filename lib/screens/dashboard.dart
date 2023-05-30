@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'chat.dart';
 import 'chat_screen.dart';
 import 'package:alpha/screens/event.dart';
@@ -80,6 +81,14 @@ class _DashboardState extends State<Dashboard> {
                 });
               }
             }));
+  }
+
+  Future<void> launchURL(String url) async {
+    final Uri uri = Uri(scheme: 'https', host: url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw "can not launch url";
+    }
   }
 
   @override
@@ -176,6 +185,7 @@ class _DashboardState extends State<Dashboard> {
                   )),
               ListTile(
                   onTap: () {
+                    launchURL('www.united.ac.in');
                     Navigator.pop(context);
                   },
                   title: const Padding(
@@ -290,12 +300,12 @@ class _DashboardState extends State<Dashboard> {
                   height: 130,
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: CircleAvatar(
-                          radius: 45,
+                          radius: 43,
                           child: imageUrl == 'null' || fetch == false
                               ? Image.asset(
                                   "assets/profile.png",
@@ -340,9 +350,9 @@ class _DashboardState extends State<Dashboard> {
                           )
                         ],
                       ),
-                      const SizedBox(
-                        width: 70,
-                      ),
+                      // const SizedBox(
+                      //   width: 10,
+                      // ),
                     ],
                   ),
                 ),

@@ -71,12 +71,12 @@ class _SignUpState extends State<SignUp> {
               child: Container(
                 height: 145,
                 width: 145,
-                // decoration: BoxDecoration(
-                //   borderRadius: BorderRadius.circular(20),
-                //   image: const DecorationImage(
-                //       image: AssetImage('assets/united.jpeg'),
-                //       fit: BoxFit.fill),
-                // ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  // image: const DecorationImage(
+                  //     image: AssetImage('assets/united.jpeg'),
+                  //     fit: BoxFit.fill),
+                ),
               ),
             ),
             const Padding(
@@ -97,7 +97,7 @@ class _SignUpState extends State<SignUp> {
                 controller: username,
                 enabled: enabled),
             c.createTextField(
-                title: 'Password',
+                title: 'Create Password',
                 keyboardType: TextInputType.text,
                 controller: password,
                 isPassword: true,
